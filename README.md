@@ -2,12 +2,9 @@
 
 Package: `@sciground/mcp` · Version: `0.1.0` · MCP name: `ai.licklider/sciground`
 
-**Release preparation only. This draft has not been published.**
-
 Production acceptance covers Claude Web with Google sign-in. The connection-only
 npx adapter has also passed Google OAuth/PKCE, hosted MCP initialization and
-dynamic tool discovery from a newly installed tarball. This package is still
-being prepared for npm publication.
+dynamic tool discovery from a newly installed tarball.
 
 Claude Web connects directly to the hosted remote HTTP MCP service through its
 custom connector settings. Local stdio clients use the adapter below.
@@ -27,9 +24,9 @@ does not mean that execution is enabled.
 
 ## Connection and package availability
 
-See the [official connection guide](https://www.licklider.ai/docs/sciground-connect/).
-For this Public Beta, use Claude Web and Google sign-in. Broader client or
-feature descriptions in general documentation do not expand this release's scope.
+The [official connection guide](https://www.licklider.ai/docs/sciground-connect/)
+covers the hosted Claude Web connection with Google sign-in. The local stdio
+adapter uses the same Google-only service; its instructions are below.
 
 Hosted MCP endpoint:
 `https://sciground-api-mcp-845495614928.us-west2.run.app/mcp`
@@ -40,8 +37,7 @@ The package launch command is:
 npx --yes @sciground/mcp
 ```
 
-After npm publication, the corresponding Claude Code
-registration command is:
+The corresponding Claude Code registration command is:
 
 ```sh
 claude mcp add sciground -- npx --yes @sciground/mcp
@@ -81,4 +77,4 @@ The stdio adapter's live acceptance covers authentication, initialization and
 tool discovery. Claude Code's command above uses that stdio path and matches its
 documented CLI syntax; no Claude Code UI or model was operated automatically.
 Claude Desktop, ChatGPT and other clients have no new acceptance claim from
-this package preparation.
+this release.

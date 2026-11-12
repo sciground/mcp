@@ -2,7 +2,7 @@
   "name": "@sciground/mcp",
   "version": "0.1.0",
   "description": "SciGround MCP (Public Beta)",
-  "private": true,
+  "private": false,
   "license": "UNLICENSED",
   "mcpName": "ai.licklider/sciground",
   "bin": {

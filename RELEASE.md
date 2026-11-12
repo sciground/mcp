@@ -1,4 +1,4 @@
-# SciGround MCP (Public Beta) 0.1.0 — release draft
+# SciGround MCP (Public Beta) 0.1.0
 
 SciGround MCP provides a hosted MCP connection for Claude Web with Google sign-in.
 This Public Beta supports `study_create`, `study_current`, and `study_diagnostics`.
@@ -10,11 +10,12 @@ Diagnostics do not establish a scientific guarantee.
 
 Claude Web remote HTTP acceptance has completed. The connection-only local
 stdio adapter has passed Google OAuth/PKCE, hosted initialization and tool
-discovery. npm publication is still being prepared.
+discovery.
 The adapter discovers tools and schemas from the hosted server and supplies
 no SciGround tool implementations, business logic or scientific checks.
-The intended package command is `npx --yes @sciground/mcp`; Claude Code registers
+The package command is `npx --yes @sciground/mcp`; Claude Code registers
 that same command with `claude mcp add sciground -- npx --yes @sciground/mcp`.
-The npm artifact remains unpublished until its OAuth binding, live connection
-acceptance, provenance source and release authorization are complete.
-Publish this announcement only after its statements match the actual released artifacts.
+The package is a connection-only adapter to the hosted service. Only the three
+operations above are supported in this Public Beta. Other tools appearing in
+discovery do not expand the enabled product features or the client acceptance
+described above.
