@@ -2,7 +2,7 @@
   "name": "sciground-mcp",
   "version": "0.1.0",
   "description": "SciGround MCP (Public Beta): compatibility launcher for @sciground/mcp.",
-  "private": true,
+  "private": false,
   "license": "UNLICENSED",
   "repository": {"type": "git", "url": "git+https://github.com/sciground/mcp.git", "directory": "aliases/sciground-mcp"},
   "engines": {"node": ">=24.0.0"},
