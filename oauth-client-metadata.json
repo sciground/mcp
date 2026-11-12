@@ -1,0 +1,14 @@
+{
+  "client_name": "SciGround MCP (Public Beta)",
+  "redirect_uris": [
+    "http://127.0.0.1:3334/oauth/callback"
+  ],
+  "response_types": [
+    "code"
+  ],
+  "grant_types": [
+    "authorization_code"
+  ],
+  "token_endpoint_auth_method": "none",
+  "scope": "sciground:access"
+}

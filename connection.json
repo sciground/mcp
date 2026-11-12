@@ -1,0 +1,8 @@
+{
+  "url": "https://sciground-api-mcp-845495614928.us-west2.run.app/mcp",
+  "resource": "https://sciground-api-mcp-845495614928.us-west2.run.app/mcp",
+  "scope": "sciground:access",
+  "callbackPort": 3334,
+  "clientId": "dwWD4PqKpSpIerK1WJ4GFCX6dRBJCRsk",
+  "clientMetadataUrl": null
+}

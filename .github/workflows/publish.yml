@@ -1,0 +1,115 @@
+name: Publish SciGround MCP
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Canonical package first; compatibility launchers only after its acceptance
+        type: choice
+        options:
+          - '@sciground/mcp'
+          - sciground
+          - sciground-mcp
+        default: '@sciground/mcp'
+      publish:
+        description: Publish only after the release owner has approved this commit
+        type: boolean
+        default: false
+      authentication:
+        description: OIDC for an existing trusted package; bootstrap token for its first release
+        type: choice
+        options:
+          - oidc
+          - bootstrap-token
+        default: oidc
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sciground-mcp-npm-publish
+  cancel-in-progress: false
+
+jobs:
+  inspect:
+    if: github.repository == 'sciground/mcp' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.14.0'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Require the approved public source repository
+        env:
+          REPOSITORY_VISIBILITY: ${{ github.event.repository.visibility }}
+        run: test "$REPOSITORY_VISIBILITY" = public
+      - run: npm install --global npm@11.21.2 --ignore-scripts
+      - run: node --version && npm --version
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: node --test tests/launcher.test.mjs
+      - name: Inspect draft contents without publishing
+        run: |
+          npm pack --dry-run --ignore-scripts --json > pack.json
+          node .github/scripts/verify-release.mjs --draft --pack-manifest pack.json
+
+  publish:
+    if: inputs.publish && github.repository == 'sciground/mcp' && github.ref == 'refs/heads/main'
+    needs: inspect
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.14.0'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Require public provenance source
+        env:
+          REPOSITORY_VISIBILITY: ${{ github.event.repository.visibility }}
+        run: test "$REPOSITORY_VISIBILITY" = public
+      - run: npm install --global npm@11.21.2 --ignore-scripts
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Refuse an incomplete release
+        run: node .github/scripts/verify-release.mjs
+      - name: Pack and inspect the exact distribution
+        env:
+          PACKAGE: ${{ inputs.package }}
+        run: |
+          if [ "$PACKAGE" = '@sciground/mcp' ]; then
+            npm pack --ignore-scripts --json > pack.json
+            node .github/scripts/verify-release.mjs --pack-manifest pack.json
+          else
+            case "$PACKAGE" in sciground|sciground-mcp) ;; *) exit 1 ;; esac
+            node .github/scripts/verify-release.mjs --alias "$PACKAGE"
+            npm view @sciground/mcp@0.1.0 version --json | node -e "let s=''; process.stdin.on('data',c=>s+=c).on('end',()=>{if(JSON.parse(s)!=='0.1.0') process.exit(1)})"
+            cd "aliases/$PACKAGE"
+            npm pack --ignore-scripts --json > pack.json
+            node ../../.github/scripts/verify-release.mjs --alias "$PACKAGE" --pack-manifest pack.json
+          fi
+      - name: Publish with OIDC
+        if: inputs.authentication == 'oidc'
+        env:
+          NODE_AUTH_TOKEN: ''
+          PACKAGE: ${{ inputs.package }}
+        run: |
+          case "$PACKAGE" in '@sciground/mcp') ;; sciground|sciground-mcp) cd "aliases/$PACKAGE" ;; *) exit 1 ;; esac
+          npm publish ./*.tgz --provenance --access public --tag latest --ignore-scripts
+      - name: First package release with an explicitly supplied bootstrap credential
+        if: inputs.authentication == 'bootstrap-token'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_BOOTSTRAP_TOKEN }}
+          PACKAGE: ${{ inputs.package }}
+        run: |
+          test -n "$NODE_AUTH_TOKEN"
+          case "$PACKAGE" in '@sciground/mcp') ;; sciground|sciground-mcp) cd "aliases/$PACKAGE" ;; *) exit 1 ;; esac
+          npm publish ./*.tgz --provenance --access public --tag latest --ignore-scripts

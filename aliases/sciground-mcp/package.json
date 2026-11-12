@@ -1,0 +1,17 @@
+{
+  "name": "sciground-mcp",
+  "version": "0.1.0",
+  "description": "SciGround MCP (Public Beta): compatibility launcher for @sciground/mcp.",
+  "private": true,
+  "license": "UNLICENSED",
+  "repository": {"type": "git", "url": "git+https://github.com/sciground/mcp.git", "directory": "aliases/sciground-mcp"},
+  "engines": {"node": ">=24.0.0"},
+  "bin": {"sciground-mcp": "bin/launch.mjs"},
+  "files": ["bin/launch.mjs"],
+  "dependencies": {"@sciground/mcp": "0.1.0"},
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
