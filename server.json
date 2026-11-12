@@ -2,12 +2,22 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "ai.licklider/sciground",
   "title": "SciGround MCP (Public Beta)",
-  "description": "Claude Web only; Google sign-in. Tools: study_create, study_current, study_diagnostics.",
+  "description": "Google sign-in; study_create, study_current, study_diagnostics. Remote HTTP and stdio adapter.",
   "version": "0.1.0",
   "remotes": [
     {
       "type": "streamable-http",
       "url": "https://sciground-api-mcp-845495614928.us-west2.run.app/mcp"
+    }
+  ],
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@sciground/mcp",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
     }
   ]
 }
